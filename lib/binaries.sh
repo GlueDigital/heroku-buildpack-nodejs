@@ -91,7 +91,14 @@ install_nodejs() {
     echo "Downloading and installing node $number..."
   fi
 
+  echo ">> Will download: $url"
   code=$(curl "$url" -L --silent --fail --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 -o /tmp/node.tar.gz --write-out "%{http_code}")
+
+  echo ">> Got status $code and this is the result:"
+  ls -lh /tmp/node.tar.gz
+  file /tmp/node.tar.gz
+
+  echo ">> Now will remove $dir and extract it"
 
   if [ "$code" != "200" ]; then
     echo "Unable to download node: $code" && false
@@ -99,6 +106,9 @@ install_nodejs() {
   rm -rf "${dir:?}"/*
   tar xzf /tmp/node.tar.gz --strip-components 1 -C "$dir"
   chmod +x "$dir"/bin/*
+
+  echo ">> Everything seems to have worked:"
+  ls -lh "$dir"
 }
 
 install_npm() {
